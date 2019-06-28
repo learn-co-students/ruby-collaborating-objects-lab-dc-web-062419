@@ -1,45 +1,35 @@
+require 'pry'
 class Artist
   @@all = []
 
+  attr_accessor :name
+
   def initialize(name)
     @name = name
-    @songs = []
+    # self.class.all << self
   end
 
-  attr_accessor :name, :songs
+  def self.find_or_create_by_name(artist_name)
+    if self.all.find {|artist| artist.name == artist_name } != nil then self.all.find {|artist| artist.name == artist_name } else Artist.new(artist_name) end
+  end
+
+  def print_songs
+    Song.all.each { |song| if song.artist == self then puts song.name end }
+  end
 
   def add_song(song)
-    @songs << song
     song.artist = self
   end
 
+  def songs
+    Song.all.select { |song| song.artist == self }
+  end
+
   def save
-    @@all << self
+   self.class.all << self
   end
 
   def self.all
     @@all
   end
-
-  def print_songs
-    @songs.each { |song| puts song.name}
-  end
-
-  def self.find_or_create_by_name(name)
-    @@all.find do |artist|
-      if artist.name == name
-        return artist
-      else
-        artist = Artist.new(name)
-        artist.save
-        return artist
-      end
-    end
-  end
-
- 
-
-
-
-
 end

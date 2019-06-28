@@ -1,18 +1,19 @@
 require 'pry'
 
 class MP3Importer
+  attr_reader :path, :files
   def initialize(path)
     @path = path
-    @songs = load(path)
     @files = []
-    @songs.each { |song| @files << song }
+    parse_filenames(Dir[path + "/*.mp3"]).each { |path| @files << path }
   end
 
-  attr_accessor :path, :files
-
-  def load(path)
+  def import
     files = Dir[path + "/*.mp3"]
-    return parse_filenames(files)
+    parsed = parse_filenames(files)
+    parsed.each do |file|
+      Song.new_by_filename(file)
+    end
   end
 
   def parse_filenames(files)
@@ -21,12 +22,4 @@ class MP3Importer
     end
     return parsed
   end
-
-  def import
-    @songs.each do |song| 
-      Song.new_by_filename(song)
-    end
-  end
-
-
 end
